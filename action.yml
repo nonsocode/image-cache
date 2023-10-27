@@ -1,18 +1,19 @@
 name: Image Cache
+description: Caches images in a local directory.
 inputs:
   image:
+    description: |
+      The image to cache. This should be a fully qualified image name, including
+      the registry. For example, `docker.io/library/postgres:latest`.
     required: true
-    type: string
 outputs:
   cachekey:
-    type: string
     description: |
       The cache key is a string that is used to identify the cache. It is
       generated from the image name by replacing all slashes and colons with
       underscores.
     value: ${{ steps.cachekey.outputs.cachekey }}
   cache-hit:
-    type: boolean
     description: |
       A boolean that is true if the cache was hit, false otherwise.
     value: ${{ steps.image-cache.outputs.cache-hit }}
@@ -20,8 +21,9 @@ runs:
   using: composite
   steps:
     - run: mkdir -p ~/image-cache
-
+      shell: bash
     - id: cachekey
+      shell: bash
       run: |-
         echo "cachekey=$(echo "${{ github.event.inputs.image }}" | sed 's/[:\/.]/_/g')" >> $GITHUB_OUTPUT
 
@@ -32,6 +34,7 @@ runs:
           key: ${{ steps.cachekey.outputs.cachekey }}
 
     - if: steps.image-cache.outputs.cache-hit != 'true'
+      shell: bash
       run: |
           docker pull ${{ github.event.inputs.image }}
           # replace all slahhes and colons with underscores
@@ -39,6 +42,7 @@ runs:
           docker save -o ~/image-cache/postgres.tar ${{ github.event.inputs.image }}
 
     - if: steps.image-cache.outputs.cache-hit == 'true'
+      shell: bash
       run: |-
         imagefile=~/image-cache/${{ steps.cachekey.outputs.cachekey }}.tar
         docker load -i imagefile
