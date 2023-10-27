@@ -38,6 +38,7 @@ runs:
     - if: steps.image-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
+          set -x
           docker pull ${{ github.event.inputs.image }}
           # replace all slahhes and colons with underscores
           outfile=~/image-cache/${{ steps.cachekey.outputs.cachekey }}.tar
