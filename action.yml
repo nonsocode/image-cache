@@ -25,7 +25,9 @@ runs:
     - id: cachekey
       shell: bash
       run: |-
-        echo "cachekey=$(echo "${{ github.event.inputs.image }}" | sed 's/[:\/.]/_/g')" >> $GITHUB_OUTPUT
+        cachekey=$(echo "${{ github.event.inputs.image }}" | sed 's/[:\/.]/_/g')
+        echo "setting cachekey to $cachekey"
+        echo "cachekey=$cachekey" >> $GITHUB_ENV
 
     - id: image-cache
       uses: actions/cache@v1
