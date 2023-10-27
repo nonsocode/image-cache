@@ -33,7 +33,7 @@ runs:
     - id: image-cache
       uses: actions/cache@v1
       with:
-          path: ${{ steps.cachemeta.outputs.cachepath }}
+          path: ~/image-cache
           key: ${{ steps.cachemeta.outputs.cachekey }}
 
     - if: steps.image-cache.outputs.cache-hit != 'true'
