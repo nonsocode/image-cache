@@ -15,8 +15,8 @@ outputs:
     value: ${{ steps.cachemeta.outputs.cachekey }}
   cache-hit:
     description: |
-      A boolean that is true if the cache was hit, false otherwise.
-    value: ${{ steps.image-cache.outputs.cache-hit }}
+      A string that is true if the cache was hit, false otherwise.
+    value: ${{ steps.cache-hit.outputs.cachehit }}
 runs:
   using: composite
   steps:
@@ -36,14 +36,17 @@ runs:
           path: ~/img-cache
           key: ${{ steps.cachemeta.outputs.cachekey }}
 
-    - if: steps.image-cache.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-          set -x
+    - shell: bash
+      id: cache-hit
+      run: |-
+        if [[ -f ${{ steps.cachemeta.outputs.cachepath }} ]]; then
+          docker load -i ${{ steps.cachemeta.outputs.cachepath }}
+          echo "cachehit=true" >> $GITHUB_OUTPUT
+        else
           docker pull ${{ inputs.image }}
           docker save -o  ${{ steps.cachemeta.outputs.cachepath }} ${{ inputs.image }}
+          echo "cachehit=false" >> $GITHUB_OUTPUT
+        fi
+         
 
-    - if: steps.image-cache.outputs.cache-hit == 'true'
-      shell: bash
-      run: |-
-        docker load -i ${{ steps.cachemeta.outputs.cachepath }}
+   
