@@ -20,20 +20,20 @@ outputs:
 runs:
   using: composite
   steps:
-    - run: mkdir -p ~/image-cache
+    - run: mkdir -p ~/img-cache
       shell: bash
     - id: cachemeta
       shell: bash
       run: |-
         cachekey=$(echo "${{ inputs.image }}" | sed 's/[:\/.]/_/g')
-        cachepath="~/image-cache/${cachekey}.tar"
+        cachepath="~/img-cache/${cachekey}.tar"
         echo "cachekey=$cachekey" >> $GITHUB_OUTPUT
         echo "cachepath=$cachepath" >> $GITHUB_OUTPUT
 
     - id: image-cache
       uses: actions/cache@v1
       with:
-          path: ~/image-cache
+          path: ~/img-cache
           key: ${{ steps.cachemeta.outputs.cachekey }}
 
     - if: steps.image-cache.outputs.cache-hit != 'true'
