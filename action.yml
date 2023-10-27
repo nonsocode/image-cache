@@ -39,10 +39,10 @@ runs:
       shell: bash
       run: |
           set -x
-          docker pull ${{ github.event.inputs.image }}
+          docker pull ${{ inputs.image }}
           # replace all slahhes and colons with underscores
           outfile=~/image-cache/${{ steps.cachekey.outputs.cachekey }}.tar
-          docker save -o ~/image-cache/postgres.tar ${{ github.event.inputs.image }}
+          docker save -o ~/image-cache/postgres.tar ${{ inputs.image }}
 
     - if: steps.image-cache.outputs.cache-hit == 'true'
       shell: bash
