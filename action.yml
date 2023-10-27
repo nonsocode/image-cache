@@ -48,4 +48,4 @@ runs:
       shell: bash
       run: |-
         imagefile=~/image-cache/${{ steps.cachekey.outputs.cachekey }}.tar
-        docker load -i imagefile
+        docker load -i $imagefile
